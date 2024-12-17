@@ -1,4 +1,6 @@
-# E-Commerce App
+# Blazor E-Commerce v9
+
+This is a fork of [Atharva-System/blazor-ecommerce](https://github.com/Atharva-System/blazor-ecommerce) that has been upgraded to run on .NET 9, and has many other fixes and improvements.
 
 This is an eCommerce app that allows users to browse and purchase products online. It includes the following features:
 
@@ -109,32 +111,32 @@ The following diagram shows the high-level data flow of the app:
 
                    +---------------------+     +---------------------+
                    |                     |     |                     |
-                   |  Client Web Browser |     |  Server Application  |
+                   |  Client Web Browser |     |  Server Application |
                    |                     |     |                     |
                    +----------+----------+     +----------+----------+
-                              |                            |
+                              |                             |
                               |        HTTP Requests        |
                               |---------------------------->|
-                              |                            |
+                              |                             |
                               |         REST APIs           |
                               |---------------------------->|
-                              |                            |
+                              |                             |
                               |        HTTP Responses       |
                               |<----------------------------|
-                              |                            |
+                              |                             |
                               |      HTML/JS/CSS files      |
                               |<----------------------------|
-                              |                            |
+                              |                             |
                               |    Blazor WebAssembly       |
                               |        Application          |
-                              |                            |
-                              +----------+----------+      |
-                                         |                 |
-                                         |  Web API        |
-                                         |-----------------+
-                                         |                 |
-                                         |    Database     |
-                                         |<----------------+
+                              |                             |
+                              +----------+------------------|
+                                         |                  |
+                                         |  Web API         |
+                                         |----------------->|
+                                         |                  |
+                                         |    Database      |
+                                         |<-----------------+
 
 In this diagram, the client-side code is running in the user's web browser and is written in C# using the Blazor WebAssembly framework. The server-side code is written in C# using .NET Core and provides RESTful APIs for the client-side code to consume.
 
@@ -155,7 +157,7 @@ Overall, this data flow diagram shows how the client-side and server-side compon
                                 |
                                 |
                      +----------+----------+
-                     |   Application      |
+                     |   Application       |
                      |       Layer         |
                      +----------+----------+
                                 |
@@ -213,13 +215,12 @@ Provide instructions on how to install and set up your project, including any ne
 To get started with the app, follow these steps:
 
     1. Clone the repository
-    2. Build and run the server-side code using Visual Studio or dotnet run
-    3. Build and run the client-side code using Visual Studio or dotnet run
-    4 .Navigate to https://localhost:5001 in your web browser
+    2. Build the solution using Visual Studio
+    3. Set the startup project to BlazorEcommerceServer (rt-click project, Set as Startup project)
+    4. Run in local debug mode (F5)
+    4 Browser should automatically launch to https://localhost:5001 in your web browser
 
 ## Deployment
-
-[![.NET](https://github.com/Atharva-System/blazor-ecommerce/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Atharva-System/blazor-ecommerce/actions/workflows/dotnet.yml)
 
 Blazor WebAssembly applications can be easily deployed as a static website, making it easy to host on popular static website hosting platforms such as GitHub Pages or Azure Static Web Apps. This approach eliminates the need for a server to host the application, reducing the hosting cost.
 
@@ -288,8 +289,8 @@ By following these steps, you can set up the API URL for your Blazor WebAssembly
 
 ## Contributing
 
-Provide guidelines on how to contribute to your project, including code standards and contribution workflows.
+If you would like to contribute to this codebase, either create an Issue for a bug or feature request, or create a public fork and pull request with your changes.  Or contact me if you would like to be added as a contributor to this repo.
 
 ## License
 
-This project is licensed under the [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Atharva-System/blazor-ecommerce/blob/main/LICENSE).
+This project is licensed under the [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/rgamage/blazor-ecommerce-v9/blob/main/LICENSE).
