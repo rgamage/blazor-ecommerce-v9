@@ -6,7 +6,7 @@ name: My Shop Build / Deploy
 on:
   push:
     branches:
-      - main
+      - release
   workflow_dispatch:
 
 jobs:
