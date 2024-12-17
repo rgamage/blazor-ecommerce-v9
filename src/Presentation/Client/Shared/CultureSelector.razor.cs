@@ -7,12 +7,12 @@ namespace BlazorEcommerce.Client.Shared
     public partial class CultureSelector
 	{
 		[Inject]
-		public NavigationManager NavManager { get; set; }
+		public NavigationManager NavManager { get; set; } = default!;
 
 		[Inject]
-		public IJSRuntime JSRuntime { get; set; }
+		public IJSRuntime JSRuntime { get; set; } = default!;
 
-		CultureInfo[] cultures = new[]
+        CultureInfo[] cultures = new[]
 		{
 			new CultureInfo("en-US"),
 			new CultureInfo("de-DE")

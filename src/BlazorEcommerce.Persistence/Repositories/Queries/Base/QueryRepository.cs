@@ -47,7 +47,7 @@ public class QueryRepository<T, TKey> : IQueryRepository<T, TKey> where T : Base
         }
     }
 
-    public async Task<IEnumerable<T>> GetAllWithIncludeAsync(bool isChangeTracking = false, Expression<Func<T, bool>> predicate = null, bool ignoreQueryFilters = false, params Expression<Func<T, object>>[] includes)
+    public async Task<IEnumerable<T>> GetAllWithIncludeAsync(bool isChangeTracking = false, Expression<Func<T, bool>>? predicate = null, bool ignoreQueryFilters = false, params Expression<Func<T, object>>[] includes)
     {
         IQueryable<T> query = context.Set<T>();
 
@@ -109,7 +109,7 @@ public class QueryRepository<T, TKey> : IQueryRepository<T, TKey> where T : Base
 
     }
 
-    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, bool isChangeTracking = false, bool ignoreQueryFilters = false)
+    public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate, bool isChangeTracking = false, bool ignoreQueryFilters = false)
     {
         IQueryable<T> query = context.Set<T>();
         if (ignoreQueryFilters)
@@ -138,7 +138,7 @@ public class QueryRepository<T, TKey> : IQueryRepository<T, TKey> where T : Base
         return await query.FirstOrDefaultAsync();
     }
 
-    public async Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate, bool isChangeTracking = false, bool ignoreQueryFilters = false)
+    public async Task<T?> GetByIdAsync(Expression<Func<T, bool>> predicate, bool isChangeTracking = false, bool ignoreQueryFilters = false)
     {
         IQueryable<T> query = context.Set<T>();
         if (ignoreQueryFilters)
@@ -167,7 +167,7 @@ public class QueryRepository<T, TKey> : IQueryRepository<T, TKey> where T : Base
         return await query.SingleOrDefaultAsync();
     }
 
-    public async Task<T> GetWithIncludeAsync(bool isChangeTracking, Expression<Func<T, bool>> predicate, bool ignoreQueryFilters = false, params Expression<Func<T, object>>[] includes)
+    public async Task<T?> GetWithIncludeAsync(bool isChangeTracking, Expression<Func<T, bool>> predicate, bool ignoreQueryFilters = false, params Expression<Func<T, object>>[] includes)
     {
         IQueryable<T> query = context.Set<T>();
         if (ignoreQueryFilters)

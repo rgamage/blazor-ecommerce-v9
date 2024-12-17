@@ -24,3 +24,7 @@
 .col-visible {
     text-align: center;
 }
+
+.mud-tab {
+    min-height: 0;
+}

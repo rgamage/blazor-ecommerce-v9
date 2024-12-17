@@ -135,6 +135,10 @@ namespace BlazorEcommerce.Identity.Service
         #region private methods
         private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
         {
+            if (user  == null) {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -143,7 +147,7 @@ namespace BlazorEcommerce.Identity.Service
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, user.Email ?? string.Empty),
             }
             .Union(roleClaims);
 

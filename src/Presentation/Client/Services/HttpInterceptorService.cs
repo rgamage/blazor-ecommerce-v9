@@ -29,7 +29,7 @@ public class HttpInterceptorService
 
     public async Task InterceptBeforeHttpAsync(object sender, HttpClientInterceptorEventArgs e)
     {
-        var absPath = e.Request.RequestUri.AbsolutePath;
+        var absPath = e.Request.RequestUri?.AbsolutePath ?? string.Empty;
 
         var isUserAuthenticated = await _authService.IsUserAuthenticated();
 
@@ -44,10 +44,15 @@ public class HttpInterceptorService
         }
     }
 
-    private void InterceptResponse(object sender, HttpClientInterceptorEventArgs e)
+    private void InterceptResponse(object? sender, HttpClientInterceptorEventArgs e)
     {
-        string message = string.Empty;
-
+        string message;
+        if (e.Response == null)
+        {
+            var requestUrl = Uri.EscapeDataString(e.Request?.RequestUri?.ToString() ?? string.Empty);
+            _navManager.NavigateTo($"/400?requestUrl={requestUrl}");
+            return;
+        }
         if (!e.Response.IsSuccessStatusCode)
         {
             var statusCode = e.Response.StatusCode;
@@ -56,12 +61,18 @@ public class HttpInterceptorService
             {
                 case HttpStatusCode.NotFound:
                     _navManager.NavigateTo("/404");
-                    message = "The requested resorce was not found.";
+                    message = "The requested resource was not found.";
                     break;
                 case HttpStatusCode.Unauthorized:
-                    _navManager.NavigateTo("/unauthorized");
-                    message = "User is not authorized";
-                    break;
+                    //var errorMessage = "Unauthorized. Please enter valid credentials";
+                    //_navManager.NavigateTo($"/login");
+                    //message = "User is not authorized";
+                    //break;
+                    return;
+                case HttpStatusCode.BadRequest:
+                    var requestUrl = Uri.EscapeDataString(e.Request?.RequestUri?.ToString() ?? string.Empty);
+                    _navManager.NavigateTo($"/400?requestUrl={requestUrl}");
+                    return;
                 default:
                     _navManager.NavigateTo("/500");
                     message = "Something went wrong, please contact Administrator";

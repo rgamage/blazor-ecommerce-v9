@@ -1,6 +1,7 @@
 ﻿using BlazorEcommerce.Application.Contracts.Identity;
 using BlazorEcommerce.Shared.Cart;
 using BlazorEcommerce.Shared.Order;
+using System.Net;
 
 namespace BlazorEcommerce.Application.Features.Order.Command.PlaceOrder;
 
@@ -23,7 +24,12 @@ public class PlaceOrderCommandHandler : IRequestHandler<PlaceOrderCommandRequest
 
     public async Task<IResponse> Handle(PlaceOrderCommandRequest request, CancellationToken cancellationToken)
     {
-        string userId = _currentUser.UserId;
+        string userId = (_currentUser.UserId ?? request.products.FirstOrDefault()?.UserId) ?? string.Empty;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return new DataResponse<string?>(null, HttpStatusCodes.NotFound, string.Format(Messages.InvalidCredentials, "Order"), false);
+        }
 
         decimal totalPrice = 0;
         request.products.ForEach(product => totalPrice += product.Price * product.Quantity);

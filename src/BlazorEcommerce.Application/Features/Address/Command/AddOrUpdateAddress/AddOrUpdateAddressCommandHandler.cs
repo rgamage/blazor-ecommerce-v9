@@ -28,7 +28,7 @@ public class AddOrUpdateAddressCommandHandler : IRequestHandler<AddOrUpdateComma
         var isRecordExists = await _query.AddressQuery.AnyAsync(cat => cat.UserId == request.address.UserId);
         if (isRecordExists == false)
         {
-            addressMapped.UserId = Convert.ToString(_currentUser.UserId);
+            addressMapped.UserId = _currentUser.UserId ?? string.Empty;
             await _command.AddressCommand.AddAsync(addressMapped);
         }
         else

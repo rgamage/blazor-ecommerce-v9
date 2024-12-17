@@ -34,11 +34,12 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandR
         dbProduct.ImageUrl = request.product.ImageUrl;
         dbProduct.CategoryId = request.product.CategoryId;
         dbProduct.Featured = request.product.Featured;
+        dbProduct.UseMarkdown = request.product.UseMarkdown;
 
         var productImages = dbProduct.Images;
         _command.ImageCommand.RemoveRange(productImages);
 
-        dbProduct.Images = _mapper.Map<List<Image>>(request.product.Images);
+        dbProduct.Images = _mapper.Map<List<Domain.Entities.Image>>(request.product.Images);
 
         foreach (var variant in request.product.Variants)
         {

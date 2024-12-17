@@ -1,4 +1,5 @@
-﻿using BlazorEcommerce.Application.Features.Cart.Commands.AddToCart;
+﻿using BlazorEcommerce.Application.Contracts.Identity;
+using BlazorEcommerce.Application.Features.Cart.Commands.AddToCart;
 using BlazorEcommerce.Application.Features.Cart.Commands.RemoveItemFromCart;
 using BlazorEcommerce.Application.Features.Cart.Commands.StoreCartItems;
 using BlazorEcommerce.Application.Features.Cart.Commands.UpdateQuantity;
@@ -18,10 +19,12 @@ namespace BlazorEcommerce.Server.Controllers
     public class CartController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUser _currentUser;
 
-        public CartController(IMediator mediator)
+        public CartController(IMediator mediator, ICurrentUser currentUser)
         {
             _mediator = mediator;
+            _currentUser = currentUser;
         }
 
         [HttpPost("products")]
@@ -34,10 +37,24 @@ namespace BlazorEcommerce.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<IResponse>> StoreCartItems(List<CartItemDto> cartItems)
         {
+            // first check if there are any duplicate items already in the user's cart
+            var getItemsResponse = await _mediator.Send(new GetDbCartProductsQueryRequest());
+            var existingItems = getItemsResponse as DataResponse<List<CartProductResponse>>;
+            if (existingItems?.Data != null)
+            {
+                var itemsToDelete = cartItems
+                    .Where(c => existingItems.Data.Exists(d => d.UserId == _currentUser.UserId && d.ProductId == c.ProductId && d.ProductTypeId == c.ProductTypeId))
+                    .ToList();
+                foreach(var item in itemsToDelete)
+                {
+                    cartItems.Remove(item);
+                }
+            }
+
             var result = await _mediator.Send(new StoreCartItemsCommandRequest(cartItems));
             if (!result.Success)
             {
-                return new DataResponse<List<CartProductResponse>>(new List<CartProductResponse>(), HttpStatusCodes.NotFound);
+                return new DataResponse<List<CartProductResponse>>([], HttpStatusCodes.NotFound);
             }
             else
             {

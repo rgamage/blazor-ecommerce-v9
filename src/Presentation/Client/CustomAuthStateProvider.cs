@@ -19,7 +19,7 @@ namespace BlazorEcommerce.Client
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            string authToken = await _localStorageService.GetItemAsStringAsync("authToken");
+            string? authToken = await _localStorageService.GetItemAsStringAsync("authToken");
 
             var identity = new ClaimsIdentity();
             _http.DefaultRequestHeaders.Authorization = null;
@@ -64,9 +64,12 @@ namespace BlazorEcommerce.Client
             var keyValuePairs = JsonSerializer
                 .Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            var claims = keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()));
-
-            return claims;
+            if (keyValuePairs != null)
+            {
+                var claims = keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString() ?? string.Empty));
+                return claims;
+            }
+            return [];
         }
     }
 }

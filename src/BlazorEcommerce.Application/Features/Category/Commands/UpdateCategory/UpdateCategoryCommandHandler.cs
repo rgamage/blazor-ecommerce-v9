@@ -1,5 +1,4 @@
 ﻿using BlazorEcommerce.Shared.Category;
-using Microsoft.AspNetCore.Http;
 
 namespace BlazorEcommerce.Application.Features.Category.Commands.UpdateCategory;
 

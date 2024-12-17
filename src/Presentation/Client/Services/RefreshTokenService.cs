@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using System.Security.Claims;
 
 namespace BlazorEcommerce.Client.Services
 {
@@ -16,10 +17,15 @@ namespace BlazorEcommerce.Client.Services
 		public async Task<string> TryRefreshToken()
 		{
 			var authState = await _authProvider.GetAuthenticationStateAsync();
-			var user = authState.User;
+			ClaimsPrincipal user = authState.User;
+			var exp = user?.FindFirst(c => c.Type.Equals("exp"))?.Value;
+            if (string.IsNullOrEmpty(exp))
+            {
+				// no user or no exp time found for token
+                return string.Empty;
+            }
 
-			var exp = user.FindFirst(c => c.Type.Equals("exp")).Value;
-			var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
+            var expTime = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(exp));
 
 			var timeUTC = DateTime.UtcNow;
 

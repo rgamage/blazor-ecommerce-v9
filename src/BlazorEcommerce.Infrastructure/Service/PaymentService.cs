@@ -5,6 +5,7 @@ using BlazorEcommerce.Shared.Cart;
 using BlazorEcommerce.Shared.Constant;
 using BlazorEcommerce.Shared.Response.Abstract;
 using BlazorEcommerce.Shared.Response.Concrete;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -17,22 +18,24 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
         private readonly ICurrentUser _currentUser;
         private readonly StripeConfig _stripeConfig;
         private readonly AppConfig _appConfig;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly string secret = string.Empty;
 
-        public PaymentService(ICurrentUser currentUser, IOptions<StripeConfig> stripeConfig, IOptions<AppConfig> appConfig)
+        public PaymentService(ICurrentUser currentUser, IOptions<StripeConfig> stripeConfig, IOptions<AppConfig> appConfig, IHttpContextAccessor httpContextAccessor)
         {
             _currentUser = currentUser;
             _stripeConfig = stripeConfig.Value;
             _appConfig = appConfig.Value;
+            _httpContextAccessor = httpContextAccessor;
             StripeConfiguration.ApiKey = _stripeConfig.ApiKey;
             secret = _stripeConfig.Secret;
         }
 
-
-        public async Task<IResponse> CreateCheckoutSession(List<CartProductResponse> products)
+        public Task<IResponse> CreateCheckoutSession(List<CartProductResponse> products)
         {
             var lineItems = new List<SessionLineItemOptions>();
+
             products.ForEach(product => lineItems.Add(new SessionLineItemOptions
             {
                 PriceData = new SessionLineItemPriceDataOptions
@@ -42,7 +45,8 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
                         Name = product.Title,
-                        Images = new List<string> { product.ImageUrl }
+                        // if there is no image url, then create one based on the image url endpoint
+                        Images = [$"{(string.IsNullOrEmpty(product.ImageUrl) ? GetImageUrl(product.ProductId) : product.ImageUrl)}"]
                     }
                 },
                 Quantity = product.Quantity
@@ -50,6 +54,7 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
 
             var options = new SessionCreateOptions
             {
+                ClientReferenceId = _currentUser.UserId,
                 CustomerEmail = _currentUser.UserEmail,
                 ShippingAddressCollection =
                     new SessionShippingAddressCollectionOptions
@@ -57,9 +62,9 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
                         AllowedCountries = new List<string> { "US" }
                     },
                 PaymentMethodTypes = new List<string>
-                {
-                    "card"
-                },
+                    {
+                        "card"
+                    },
                 LineItems = lineItems,
                 Mode = "payment",
                 SuccessUrl = $"{_appConfig.ClientUrl}order-success",
@@ -69,7 +74,7 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
             var service = new SessionService();
             Session session = service.Create(options);
 
-            return new DataResponse<string>(session.Url, HttpStatusCodes.Accepted);
+            return Task.FromResult<IResponse>(new DataResponse<string>(session.Url, HttpStatusCodes.Accepted));
         }
 
         public async Task<IResponse> FulfillOrder(HttpRequest request)
@@ -82,10 +87,15 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
                         request.Headers["Stripe-Signature"],
                         secret
                     );
-
-                if (stripeEvent.Type == Events.CheckoutSessionCompleted)
+                if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
                 {
-                    return new DataResponse<string?>(null);
+                    var session = stripeEvent.Data.Object as Session;
+                    var userId = session?.ClientReferenceId;
+                    return new DataResponse<string?>(userId);
+                }
+                if (stripeEvent.Type == EventTypes.ChargeSucceeded)
+                {
+                    // todo: handle this event in the future?
                 }
 
                 return new DataResponse<string?>(null, HttpStatusCodes.InternalServerError, stripeEvent.StripeResponse.Content, false);
@@ -94,6 +104,25 @@ namespace BlazorEcommerce.Infrastructure.Services.PaymentService
             {
                 return new DataResponse<string?>(null, HttpStatusCodes.InternalServerError, e.Message, false);
             }
+        }
+
+        /// <summary>
+        /// given a product id, return the image url relative to the absolute web app base url
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private string GetImageUrl(int productId)
+        {
+            var request = _httpContextAccessor.HttpContext?.Request;
+            if (request == null)
+            {
+                throw new InvalidOperationException("Unable to determine base URL.");
+            }
+
+            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            var imageUrl = $"{baseUrl}/api/image/{productId}";
+            return imageUrl;
         }
     }
 }

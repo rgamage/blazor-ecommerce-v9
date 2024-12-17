@@ -30,6 +30,10 @@ namespace BlazorEcommerce.Server.Controllers
             if (result.Success)
             {
                 var resultCast = (DataResponse<List<CartProductResponse>>)result;
+                if (resultCast.Data == null)
+                {
+                    return BadRequest("No items in cart");
+                }
                 var session = await _paymentService.CreateCheckoutSession(resultCast.Data);
                 return Ok(session);
             }
@@ -44,13 +48,18 @@ namespace BlazorEcommerce.Server.Controllers
         {
             var response = await _paymentService.FulfillOrder(Request);
 
-            if (response.Success)
+            if (response != null && response.Success)
             {
-                var result = await _mediator.Send(new GetDbCartProductsQueryRequest());
+                var userId = (response as DataResponse<string?>)?.Data;
+                var result = await _mediator.Send(new GetDbCartProductsQueryRequest(userId));
 
                 if (result.Success)
                 {
                     var resultCast = (DataResponse<List<CartProductResponse>>)result;
+                    if (resultCast?.Data == null)
+                    {
+                        return BadRequest("No items in cart");
+                    }
                     await _mediator.Send(new PlaceOrderCommandRequest(resultCast.Data));
                 }
             }

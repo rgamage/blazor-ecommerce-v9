@@ -1,4 +1,7 @@
 ﻿using BlazorEcommerce.Application.Contracts.Identity;
+using BlazorEcommerce.Shared.Cart;
+using BlazorEcommerce.Shared.Constant;
+using BlazorEcommerce.Shared.Response.Concrete;
 using BlazorEcommerce.Shared.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +25,10 @@ namespace BlazorEcommerce.Server.Controllers
         public async Task<ActionResult<IResponse>> ChangePassword([FromBody] UserChangePassword changePassword)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return new DataResponse<string>("Missing user", HttpStatusCodes.NotFound);
+            }
             var response = await _identityService.ChangePassword(userId, changePassword.CurrentPassword, changePassword.Password);
 
             if (!response.Success)

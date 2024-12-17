@@ -19,35 +19,40 @@ else
             {
                 <MudCarousel Class="mud-width-full" ItemsSource="@product.Images" Style="height: 200px;">
                     <ItemTemplate>
-                        <MudImage Src="@context.Data"></MudImage>>
+                        <MudImage Src="@context.Data"></MudImage>
                     </ItemTemplate>
                 </MudCarousel>
             }
         </div>
         <div class="media-body">
             <h2 class="mb-0">@product.Title</h2>
-            <p>@product.Description</p>
+            @if (product.UseMarkdown) {
+                <MudMarkdown Value="@product.Description" CodeBlockTheme="CodeBlockTheme.DraculaBase16" />
+            }
+            else {
+                <p>@product.Description</p>
+            }
             @if (product.Variants != null && product.Variants.Count > 1)
             {
                 <div class="mb-3">
                     <select class="form-select" @bind="currentTypeId">
-                        @foreach (var variant in product.Variants)
+                        @foreach (var productType in product.Variants.Where(x => x.ProductType != null).Select(x => x.ProductType!))
                         {
-                            <option value="@variant.ProductTypeId">@variant.ProductType.Name</option>
+                            <option value="@productType.Id">@productType.Name</option>
                         }
                     </select>
                 </div>
             }
             @if (GetSelectedVariant() != null)
             {
-                @if (GetSelectedVariant().OriginalPrice > GetSelectedVariant().Price)
+                @if (GetSelectedVariant()?.OriginalPrice > GetSelectedVariant()?.Price)
                 {
                     <h6 class="text-muted original-price">
-                        $@GetSelectedVariant().OriginalPrice
+                        $@GetSelectedVariant()?.OriginalPrice
                     </h6>
                 }
                 <h4 class="price">
-                    $@GetSelectedVariant().Price
+                    $@GetSelectedVariant()?.Price
                 </h4>
             }
             <button class="btn btn-primary" @onclick="AddToCart">
@@ -55,15 +60,13 @@ else
             </button>
         </div>
     </div>
-
 }
 
 @code {
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
-
+    public HttpInterceptorService Interceptor { get; set; } = default!;
     private ProductDto? product = null;
-    private string message = string.Empty;
+    private string? message = string.Empty;
     private int currentTypeId = 1;
 
     [Parameter]
@@ -94,15 +97,19 @@ else
         }
     }
 
-    private ProductVariantDto GetSelectedVariant()
+    private ProductVariantDto? GetSelectedVariant()
     {
-        var variant = product.Variants.FirstOrDefault(v => v.ProductTypeId == currentTypeId);
+        var variant = product?.Variants?.FirstOrDefault(v => v.ProductTypeId == currentTypeId);
         return variant;
     }
 
     private async Task AddToCart()
     {
         var productVariant = GetSelectedVariant();
+        if (productVariant == null)
+        {
+            return;
+        }
         var cartItem = new CartItemDto
             {
                 ProductId = productVariant.ProductId,

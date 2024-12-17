@@ -4,7 +4,7 @@
 @attribute [Authorize]
 
 <AuthorizeView>
-    <h3>Hi! You're logged in with <i>@context.User.Identity.Name</i>.</h3>
+    <h3>Hi! You're logged in with <i>@context.User.Identity?.Name</i>.</h3>
 </AuthorizeView>
 
 <h5>Delivery Address</h5>
@@ -38,7 +38,7 @@
         var result = await UserService.ChangePassword(request);
         if (result != null)
         {
-            message = result.Messages.FirstOrDefault();
+			message = result.Messages.FirstOrDefault() ?? string.Empty;
         }
     }
 }

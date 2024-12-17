@@ -34,17 +34,16 @@ else
                         {
                             <img src="@product.ImageUrl" />
                         }
-                       @* else if (product.Images.Count > 0)
+                        else if (product.Images.Count > 0)
                         {
                             <img src="@product.Images[0].Data" />
-                        }*@
+                        }
                     </td>
                     <td>@product.Title</td>
                     <td>
                         @foreach (var variant in product.Variants)
                         {
-                            <span>@variant.ProductType.Name</span>
-
+                            <span>@variant.ProductType?.Name</span>
                             <br />
                         }
                     </td>
@@ -52,7 +51,6 @@ else
                         @foreach (var variant in product.Variants)
                         {
                             <span>@variant.Price</span>
-
                             <br />
                         }
                     </td>
@@ -70,7 +68,7 @@ else
 
 @code {
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {

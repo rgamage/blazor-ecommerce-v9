@@ -18,7 +18,7 @@ public class OrderQueryRepository : QueryRepository<Order, int>, IOrderQueryRepo
                         .ToListAsync();
     }
 
-    public async Task<Order> GetOrderDetails(string userId, int id)
+    public async Task<Order?> GetOrderDetails(string userId, int id)
     {
         var order = await context.Orders
            .Include(o => o.OrderItems)

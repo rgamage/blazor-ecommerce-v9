@@ -36,9 +36,9 @@ else
     public int OrderId { get; set; }
 
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
-    OrderDetailsResponse order = null;
+    OrderDetailsResponse? order = null;
 
     protected override async Task OnInitializedAsync()
     {
