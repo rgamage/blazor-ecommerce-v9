@@ -82,7 +82,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses", "gx");
+                    b.ToTable("Addresses", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.CartItem", b =>
@@ -104,7 +104,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("UserId", "ProductId", "ProductTypeId");
 
-                    b.ToTable("CartItems", "gx");
+                    b.ToTable("CartItems", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Category", b =>
@@ -143,7 +143,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", "gx");
+                    b.ToTable("Categories", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Image", b =>
@@ -165,7 +165,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", "gx");
+                    b.ToTable("Images", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Order", b =>
@@ -206,7 +206,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders", "gx");
+                    b.ToTable("Orders", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.OrderItem", b =>
@@ -235,7 +235,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("OrderItems", "gx");
+                    b.ToTable("OrderItems", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Product", b =>
@@ -291,7 +291,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", "gx");
+                    b.ToTable("Products", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.ProductType", b =>
@@ -308,7 +308,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTypes", "gx");
+                    b.ToTable("ProductTypes", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.ProductVariant", b =>
@@ -350,7 +350,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("ProductVariants", "gx");
+                    b.ToTable("ProductVariants", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Image", b =>

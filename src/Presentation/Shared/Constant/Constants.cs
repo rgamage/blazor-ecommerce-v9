@@ -8,9 +8,9 @@ namespace BlazorEcommerce.Shared.Constant
         public static string AdminName => "Admin";
         public static string AdminRoleName => "Admin";
         public static string AdminPassword => "P@ssw0rd";
-        public static string IdentityDbSchema => "gx";  // default = dbo, customize here to allow sharing of the same database for multiple projects
-        public static string PersistenceDbSchema => "gx"; // default = dbo, customize here to allow sharing of the same database for multiple projects
-        public static string CompanyName => "Gamatronix";  // customize with your company name
+        public static string IdentityDbSchema => "dbo";  // default = dbo, customize here to allow sharing of the same database for multiple projects
+        public static string PersistenceDbSchema => "dbo"; // default = dbo, customize here to allow sharing of the same database for multiple projects
+        public static string CompanyName => "My Shop";  // customize with your company name
         public static string ImageFormat => "image/png";
     }
 

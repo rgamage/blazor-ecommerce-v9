@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorEcommerce.Persistence.Migrations
 {
     [DbContext(typeof(PersistenceDataContext))]
-    [Migration("20241125212439_InitialMigration_PersistenceDb")]
-    partial class InitialMigration_PersistenceDb
+    [Migration("20241217154816_InitialMigration_PersistenceDataContext")]
+    partial class InitialMigration_PersistenceDataContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,7 +85,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses", "gx");
+                    b.ToTable("Addresses", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.CartItem", b =>
@@ -107,7 +107,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("UserId", "ProductId", "ProductTypeId");
 
-                    b.ToTable("CartItems", "gx");
+                    b.ToTable("CartItems", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Category", b =>
@@ -146,7 +146,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", "gx");
+                    b.ToTable("Categories", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Image", b =>
@@ -161,14 +161,14 @@ namespace BlazorEcommerce.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", "gx");
+                    b.ToTable("Images", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Order", b =>
@@ -209,7 +209,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders", "gx");
+                    b.ToTable("Orders", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.OrderItem", b =>
@@ -238,7 +238,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("OrderItems", "gx");
+                    b.ToTable("OrderItems", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Product", b =>
@@ -285,11 +285,16 @@ namespace BlazorEcommerce.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("UseMarkdown")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", "gx");
+                    b.ToTable("Products", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.ProductType", b =>
@@ -306,7 +311,7 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductTypes", "gx");
+                    b.ToTable("ProductTypes", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.ProductVariant", b =>
@@ -348,14 +353,16 @@ namespace BlazorEcommerce.Persistence.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("ProductVariants", "gx");
+                    b.ToTable("ProductVariants", "dbo");
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.Image", b =>
                 {
                     b.HasOne("BlazorEcommerce.Domain.Entities.Product", null)
                         .WithMany("Images")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlazorEcommerce.Domain.Entities.OrderItem", b =>
