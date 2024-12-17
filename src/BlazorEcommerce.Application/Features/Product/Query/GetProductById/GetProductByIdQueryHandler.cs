@@ -20,7 +20,7 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQueryReq
 
     public async Task<IResponse> Handle(GetProductByIdQueryRequest request, CancellationToken cancellationToken)
     {
-        Domain.Entities.Product product = null;
+        Domain.Entities.Product? product;
 
         product = await _query.ProductQuery.GetProductByIdAsync(request.productId, _currentUser.UserIsInRole(Constants.AdminRoleName));
 

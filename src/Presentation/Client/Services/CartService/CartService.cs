@@ -17,7 +17,7 @@ namespace BlazorEcommerce.Client.Services.CartService
             _authService = authService;
         }
 
-        public event Action OnChange;
+        public event Action OnChange = default!;
 
         public async Task AddToCart(CartItemDto cartItem)
         {

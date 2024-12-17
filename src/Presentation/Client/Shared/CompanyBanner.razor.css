@@ -1,0 +1,14 @@
+﻿.company-banner {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.company-banner img {
+    max-height: 30px;
+}
+
+@media (max-width: 640.98px) {
+    .company-banner {
+        display: none;
+    }
+}

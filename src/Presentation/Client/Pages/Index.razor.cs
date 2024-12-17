@@ -8,16 +8,16 @@ public partial class Index : IDisposable
     private ErrorBoundary? errorBoundary;
 
     [Parameter]
-    public string CategoryUrl { get; set; } = null;
+    public string CategoryUrl { get; set; } = default!;
 
     [Parameter]
-    public string SearchText { get; set; } = null;
+    public string SearchText { get; set; } = default!;
 
     [Parameter]
     public int Page { get; set; } = 1;
 
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
     protected override async Task OnParametersSetAsync()
     {

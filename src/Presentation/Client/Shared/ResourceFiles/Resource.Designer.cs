@@ -61,7 +61,7 @@ namespace BlazorEcommerce.Client.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Top Products of Today.
+        ///   Looks up a localized string similar to Featured Products.
         /// </summary>
         public static string featuredproductpage {
             get {
@@ -70,7 +70,7 @@ namespace BlazorEcommerce.Client.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Welcome to Blazor Shopping App.
+        ///   Looks up a localized string similar to Welcome to the Gamatronix Shopping App.
         /// </summary>
         public static string welcome {
             get {

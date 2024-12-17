@@ -1,5 +1,7 @@
 ﻿@page "/admin/product-types"
 @inject IProductTypeService ProductTypeService
+@inject HttpInterceptorService Interceptor
+
 @implements IDisposable
 @attribute [Authorize(Roles = "Admin")]
 
@@ -41,10 +43,8 @@
 </button>
 
 @code {
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
 
-    ProductTypeDto editingProductType = null;
+    ProductTypeDto editingProductType = default!;
 
     protected override async Task OnInitializedAsync()
     {

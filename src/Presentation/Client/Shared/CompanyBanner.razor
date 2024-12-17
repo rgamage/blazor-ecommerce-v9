@@ -1,0 +1,12 @@
+﻿@inject NavigationManager NavigationManager
+
+<div @onclick="GoToHome" class="company-banner">
+   <img alt="company banner" src="company-banner.png" />
+</div>
+
+@code {
+    protected void GoToHome()
+    {
+        NavigationManager.NavigateTo("");
+    }
+}

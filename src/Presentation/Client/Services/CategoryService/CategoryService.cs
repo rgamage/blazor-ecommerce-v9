@@ -14,7 +14,7 @@ namespace BlazorEcommerce.Client.Services.CategoryService
         public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
         public List<CategoryDto> AdminCategories { get; set; } = new List<CategoryDto>();
 
-        public event Action OnChange;
+        public event Action OnChange = default!;
 
         public async Task AddCategory(CategoryDto CategoryDto)
         {

@@ -12,7 +12,7 @@ namespace BlazorEcommerce.Client.Services.UserService
             _http = http;
         }
 
-        public async Task<ApiResponse<string>> ChangePassword(UserChangePassword request)
+        public async Task<ApiResponse<string>?> ChangePassword(UserChangePassword request)
         {
             var result = await _http.PostAsJsonAsync($"{UserBaseURL}change-password", request);
             return await result.Content.ReadFromJsonAsync<ApiResponse<string>>();

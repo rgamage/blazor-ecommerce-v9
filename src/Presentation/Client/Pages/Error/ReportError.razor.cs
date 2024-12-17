@@ -8,6 +8,6 @@ namespace BlazorEcommerce.Client.Pages.Error
 		public int ErrorCode { get; set; }
 
 		[Parameter]
-		public string ErrorDescription { get; set; }
+		public string? ErrorDescription { get; set; }
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using BlazorEcommerce.Application.Contracts.Identity;
 using BlazorEcommerce.Domain.Entities;
+using BlazorEcommerce.Shared.Constant;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -19,7 +20,7 @@ public class ProductQueryRepository : QueryRepository<Product, int>, IProductQue
             .ToListAsync();
     }
 
-    public async Task<Product> GetProductByIdAsync(int id, bool isAdminRole)
+    public async Task<Product?> GetProductByIdAsync(int id, bool isAdminRole)
     {
         if (isAdminRole)
         {
@@ -35,5 +36,25 @@ public class ProductQueryRepository : QueryRepository<Product, int>, IProductQue
                 .Include(p => p.Variants).ThenInclude(p => p.ProductType)
                 .FirstOrDefaultAsync(p => p.Id == id && p.IsActive);
         };
+    }
+
+    /// <summary>
+    /// gets product image as a stream
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <returns></returns>
+    public async Task<Stream> GetProductImage(int productId)
+    {
+        var stream = new MemoryStream();
+        var image = await context.Images.OrderBy(x => x.Id).FirstOrDefaultAsync(x => x.ProductId == productId);
+        if (image != null)
+        {
+            // Remove the prefix if it exists
+            var base64Data = image.Data.Replace($"data:{Constants.ImageFormat};base64,", string.Empty);
+            var imageData = Convert.FromBase64String(base64Data);
+            await stream.WriteAsync(imageData, 0, imageData.Length);
+        }
+        stream.Position = 0;
+        return stream;
     }
 }

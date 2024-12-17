@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# S2094: Classes should not be empty
+dotnet_diagnostic.S2094.severity = none
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none

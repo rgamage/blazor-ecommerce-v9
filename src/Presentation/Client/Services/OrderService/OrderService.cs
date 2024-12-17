@@ -73,7 +73,7 @@ namespace BlazorEcommerce.Client.Services.OrderService
         }
         private async Task<bool> IsUserAuthenticated()
         {
-            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
+            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity?.IsAuthenticated ?? false;
         }
     }
 }

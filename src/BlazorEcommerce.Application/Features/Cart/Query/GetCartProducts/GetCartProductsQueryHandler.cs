@@ -2,24 +2,22 @@
 
 namespace BlazorEcommerce.Application.Features.Cart.Query.GetCartProducts;
 
-public record GetCartProductsQueryRequest(List<CartItemDto> cartItems) : IRequest<IResponse>;
+public record GetCartProductsQueryRequest(List<CartItemDto> CartItems) : IRequest<IResponse>;
 
 public class GetCartProductsQueryHandler : IRequestHandler<GetCartProductsQueryRequest, IResponse>
 {
     private readonly IQueryUnitOfWork _query;
-    private readonly IMapper _mapper;
 
-    public GetCartProductsQueryHandler(IQueryUnitOfWork query, IMapper mapper)
+    public GetCartProductsQueryHandler(IQueryUnitOfWork query)
     {
         _query = query;
-        _mapper = mapper;
     }
 
     public async Task<IResponse> Handle(GetCartProductsQueryRequest request, CancellationToken cancellationToken)
     {
         var result = new List<CartProductResponse>();
 
-        foreach (var item in request.cartItems)
+        foreach (var item in request.CartItems)
         {
             var product = await _query.ProductQuery.GetByIdAsync(p => p.Id == item.ProductId);
 
@@ -32,7 +30,7 @@ public class GetCartProductsQueryHandler : IRequestHandler<GetCartProductsQueryR
                     v => v.ProductId == item.ProductId
                     && v.ProductTypeId == item.ProductTypeId,
                     false,
-                    v => v.ProductType);;
+                    v => v.ProductType);
 
             if (productVariant == null)
             {
@@ -47,7 +45,8 @@ public class GetCartProductsQueryHandler : IRequestHandler<GetCartProductsQueryR
                 Price = productVariant.Price,
                 ProductType = productVariant.ProductType.Name,
                 ProductTypeId = productVariant.ProductTypeId,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
+                UserId = item.UserId
             };
 
             result.Add(cartProduct);

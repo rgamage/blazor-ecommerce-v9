@@ -24,16 +24,16 @@ namespace BlazorEcommerce.Client.Services.AuthService
 
         public async Task<bool> IsUserAuthenticated()
         {
-            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
+            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity?.IsAuthenticated ?? false;
         }
 
-        public async Task<ApiResponse<AuthResponseDto>> Login(UserLogin request)
+        public async Task<ApiResponse<AuthResponseDto>?> Login(UserLogin request)
         {
             var result = await _http.PostAsJsonAsync($"{AuthBaseURL}login", request);
             return await result.Content.ReadFromJsonAsync<ApiResponse<AuthResponseDto>>();
         }
 
-        public async Task<ApiResponse<string>> Register(UserRegister request)
+        public async Task<ApiResponse<string>?> Register(UserRegister request)
         {
             var result = await _http.PostAsJsonAsync($"{AuthBaseURL}register", request);
             return await result.Content.ReadFromJsonAsync<ApiResponse<string>>();
@@ -41,7 +41,13 @@ namespace BlazorEcommerce.Client.Services.AuthService
 
         public async Task<string> RefreshToken()
         {
-            var token = await _localStorage.GetItemAsync<string>("authToken");
+            string token = await _localStorage.GetItemAsync<string>("authToken") ?? string.Empty;
+            if (string.IsNullOrEmpty(token))
+            {
+                _navigationManager.NavigateTo("login");
+                return string.Empty;
+            }
+
             var request = new RefreshTokenRequest() { CurrentToken = token };
 
             var result = await _http.PostAsJsonAsync($"{AuthBaseURL}refreshtoken", request);

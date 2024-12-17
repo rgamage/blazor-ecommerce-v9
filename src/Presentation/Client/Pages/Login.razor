@@ -13,6 +13,9 @@
 
 <EditForm Model="user" OnValidSubmit="HandleLogin">
     <DataAnnotationsValidator />
+    @if (!string.IsNullOrEmpty(Message)) {
+        <div class="alert-danger">@Message</div>
+    }
     <div class="mb-3">
         <label for="email">Email</label>
         <InputText id="email" @bind-Value="user.Email" class="form-control" />
@@ -25,17 +28,20 @@
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
 </EditForm>
-<div class="text-danger">
+<div class="text-danger my-3">
     <span>@errorMessage</span>
 </div>
 
 @code {
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
+
+    [SupplyParameterFromQuery] 
+    public string Message { get; set; } = default!;
 
     private UserLogin user = new UserLogin();
 
-    private string errorMessage = string.Empty;
+    private string? errorMessage = string.Empty;
 
     private string returnUrl = string.Empty;
 
@@ -45,7 +51,7 @@
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
         {
-            returnUrl = url;
+            returnUrl = url.ToString() ?? string.Empty;
         }
     }
 

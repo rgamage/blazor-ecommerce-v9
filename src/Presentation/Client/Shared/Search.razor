@@ -2,7 +2,7 @@
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
-<div class="input-group">
+<div class="input-group search">
     <input @bind-value="searchtext"
            @bind-value:event="oninput"
            type="search"
@@ -29,7 +29,7 @@
     protected ElementReference searchInput;
 
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
     protected override void OnInitialized()
     {

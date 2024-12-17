@@ -5,6 +5,7 @@
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject HttpInterceptorService Interceptor
 @implements IDisposable
 
 @if (loading)
@@ -47,8 +48,8 @@ else
                         </MudCardContent>
                         <MudCardActions Style="justify-content: center;">
                             <MudButton Variant="Variant.Filled"
-                           Color="Color.Error"
-                           OnClick="@(() => RemoveImage(image.Id))">
+                            Color="Color.Error"
+                            OnClick="@(() => RemoveImage(image.Id))">
                                 Remove
                             </MudButton>
                         </MudCardActions>
@@ -60,10 +61,30 @@ else
             <label for="images">Image(s)</label>
             <InputFile id="images" OnChange="OnFileChange" multiple class="form-control"></InputFile>
         </div>
-        <div class="mb-0">
-            <label for="description">Description</label>
-            <InputTextArea id="description" @bind-Value="product.Description" class="form-control"></InputTextArea>
+        <div class="mb-1 mt-2">
+            <InputCheckbox id="use-markdown" class="form-check-input" @bind-Value="product.UseMarkdown" />
+            <label for="use-markdown" class="form-check-label mx-1">Use Markdown in description text</label>
         </div>
+        @if (@product.UseMarkdown)
+        {
+            <MudTabs>
+                <MudTabPanel Text="Edit">
+                    <div class="mb-0">
+                        <label for="description">Description</label>
+                        <InputTextArea id="description" @bind-Value="product.Description" class="form-control"></InputTextArea>
+                    </div>
+                </MudTabPanel>
+                <MudTabPanel Text="Preview">
+                    <MudMarkdown Value="@product.Description" CodeBlockTheme="CodeBlockTheme.DraculaBase16" />
+                </MudTabPanel>
+            </MudTabs>
+        }
+        else {
+            <div class="mb-0">
+                <label for="description">Description</label>
+                <InputTextArea id="description" @bind-Value="product.Description" class="form-control"></InputTextArea>
+            </div>
+        }
         <hr />
         <div class="header">
             <div class="col">Product Type / Variant</div>
@@ -137,9 +158,6 @@ else
     [Parameter]
     public int Id { get; set; }
 
-    [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
-
     ProductDto product = new ProductDto();
     bool loading = true;
     string btnText = "";
@@ -162,7 +180,7 @@ else
         }
         else
         {
-            ProductDto dbProduct = await ProductService.GetProductDetails(Id);
+            ProductDto? dbProduct = await ProductService.GetProductDetails(Id);
             if (dbProduct == null)
             {
                 msg = $"Product with Id '{Id}' does not exist!";
@@ -226,14 +244,17 @@ else
 
     async Task OnFileChange(InputFileChangeEventArgs e)
     {
-        var format = "image/png";
+        var format = Constants.ImageFormat;
         foreach (var image in e.GetMultipleFiles(int.MaxValue))
         {
             var resizedImage = await image.RequestImageFileAsync(format, 200, 200);
             var buffer = new byte[resizedImage.Size];
             await resizedImage.OpenReadStream().ReadAsync(buffer);
-            var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-            product.Images.Add(new ImageDto { Data = imageData });
+            buffer = ImageHelper.MakeSquare(buffer);
+            if (buffer != null) {
+                var imageData = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
+                product.Images.Add(new ImageDto { Data = imageData });
+            }
         }
     }
 

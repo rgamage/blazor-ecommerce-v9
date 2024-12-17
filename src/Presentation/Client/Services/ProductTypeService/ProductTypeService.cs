@@ -12,7 +12,7 @@ public class ProductTypeService : IProductTypeService
 
     public List<ProductTypeDto> ProductTypes { get; set; } = new List<ProductTypeDto>();
 
-    public event Action OnChange;
+    public event Action? OnChange;
 
     public async Task AddProductType(ProductTypeDto productType)
     {
@@ -24,7 +24,7 @@ public class ProductTypeService : IProductTypeService
         {
             ProductTypes = result.Data;
 
-            OnChange.Invoke();
+            OnChange?.Invoke();
         }
     }
 
@@ -33,7 +33,7 @@ public class ProductTypeService : IProductTypeService
         var newProductType = new ProductTypeDto { IsNew = true, Editing = true };
 
         ProductTypes.Add(newProductType);
-        OnChange.Invoke();
+        OnChange?.Invoke();
         return newProductType;
     }
 
@@ -58,7 +58,7 @@ public class ProductTypeService : IProductTypeService
         {
             ProductTypes = result.Data;
 
-            OnChange.Invoke();
+            OnChange?.Invoke();
         }
     }
 }

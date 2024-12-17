@@ -12,15 +12,31 @@ else
         {
             <li class="media my-3">
                 <div class="media-img-wrapper mr-2">
-                    <a href="/product/@item.Id">
-                        <img class="media-img" src="@item.ImageUrl" alt="@item.Title" />
-                    </a>
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <a href="/product/@item.Id">
+                            <img class="media-img" src="@item.ImageUrl" alt="@item.Title" />
+                        </a>
+                    }
+                    else
+                    {
+                        <MudCarousel Class="mud-width-full" ItemsSource="@item.Images" Style="height: 200px;">
+                            <ItemTemplate>
+                                <MudImage Src="@context.Data"></MudImage>
+                            </ItemTemplate>
+                        </MudCarousel>
+                    }
                 </div>
                 <div class="media-body">
                     <a href="/product/@item.Id">
                         <h4 class="mb-0">@item.Title</h4>
                     </a>
-                    <p>@item.Description</p>
+                    @if (item.UseMarkdown) {
+                        <MudMarkdown Value="@item.Description" CodeBlockTheme="CodeBlockTheme.DraculaBase16" />
+                    }
+                    else {
+                        <p>@item.Description</p>
+                    }
                     <h5 class="price">
                         @GetPriceText(item)
                     </h5>

@@ -112,3 +112,7 @@ a, .btn-link {
 .price {
     color: green
 }
+
+.mud-tab {
+    min-height: 0;
+}

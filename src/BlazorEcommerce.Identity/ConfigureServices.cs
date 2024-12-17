@@ -3,6 +3,7 @@ using BlazorEcommerce.Application.Model;
 using BlazorEcommerce.Identity.Contexts;
 using BlazorEcommerce.Identity.Service;
 using BlazorEcommerce.Persistence.Contexts;
+using BlazorEcommerce.Shared.Constant;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +18,14 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.AddOptions<JwtSettings>()
+            .Bind(configuration.GetSection("JwtSettings"))
+            .ValidateDataAnnotations(); // Optional, validates attributes like [Required]
 
         var connectionString = configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         services.AddDbContext<UserIdentityDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(connectionString, opts => opts.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema: Constants.IdentityDbSchema)));
 
         services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
         {
@@ -49,7 +52,7 @@ public static class ConfigureServices
                 ClockSkew = TimeSpan.Zero,
                 ValidIssuer = configuration["JwtSettings:Issuer"],
                 ValidAudience = configuration["JwtSettings:Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"]))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"] ?? string.Empty))
 
             };
         });

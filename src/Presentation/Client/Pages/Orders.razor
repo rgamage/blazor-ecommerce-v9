@@ -32,10 +32,10 @@ else
 
 
 @code {
-    List<OrderOverviewResponse> orders = null;
+    List<OrderOverviewResponse> orders = [];
 
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {

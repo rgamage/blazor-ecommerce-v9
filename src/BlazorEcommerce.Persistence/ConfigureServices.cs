@@ -1,6 +1,7 @@
 ﻿using BlazorEcommerce.Application.UnitOfWork;
 using BlazorEcommerce.Persistence.Contexts;
 using BlazorEcommerce.Persistence.UnitOfWork;
+using BlazorEcommerce.Shared.Constant;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,7 @@ public static class ConfigureServices
         var connectionString = configuration.GetConnectionString("Default") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
         services.AddDbContext<PersistenceDataContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(connectionString, opts => opts.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema: Constants.PersistenceDbSchema)));
 
         services.AddScoped<PersistenceDbContextInitialiser>();
 

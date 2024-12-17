@@ -67,9 +67,9 @@
 
 @code {
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
-    CategoryDto editingCategory = null;
+	CategoryDto editingCategory = new CategoryDto();
 
     protected override async Task OnInitializedAsync()
     {

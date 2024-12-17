@@ -3,7 +3,7 @@ using BlazorEcommerce.Shared.Cart;
 
 namespace BlazorEcommerce.Application.Features.Cart.Query.GetDbCartProducts;
 
-public record GetDbCartProductsQueryRequest : IRequest<IResponse>;
+public record GetDbCartProductsQueryRequest(string? UserId = null) : IRequest<IResponse>;
 
 public class GetDbCartProductsQueryHandler : IRequestHandler<GetDbCartProductsQueryRequest, IResponse>
 {
@@ -18,7 +18,8 @@ public class GetDbCartProductsQueryHandler : IRequestHandler<GetDbCartProductsQu
 
     public async Task<IResponse> Handle(GetDbCartProductsQueryRequest request, CancellationToken cancellationToken)
     {
-        var cartItems = await _query.CartItemQuery.GetAllWithIncludeAsync(false,ci => ci.UserId == _currentUser.UserId);
+        var userId = request.UserId ?? _currentUser.UserId;
+        var cartItems = await _query.CartItemQuery.GetAllWithIncludeAsync(false,ci => ci.UserId == userId);
 
         var result = new List<CartProductResponse>();
 
@@ -35,7 +36,7 @@ public class GetDbCartProductsQueryHandler : IRequestHandler<GetDbCartProductsQu
                     v => v.ProductId == item.ProductId
                     && v.ProductTypeId == item.ProductTypeId,
                     false,
-                    v => v.ProductType); ;
+                    v => v.ProductType);
 
             if (productVariant == null)
             {
@@ -50,7 +51,8 @@ public class GetDbCartProductsQueryHandler : IRequestHandler<GetDbCartProductsQu
                 Price = productVariant.Price,
                 ProductType = productVariant.ProductType.Name,
                 ProductTypeId = productVariant.ProductTypeId,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
+                UserId = userId
             };
 
             result.Add(cartProduct);

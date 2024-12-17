@@ -1,0 +1,15 @@
+﻿@page "/400"
+
+<h3>Bad Request</h3>
+<div>
+	<p>
+		There was a bad request on url @RequestUrl
+	</p>
+</div>
+
+
+@code{
+	[SupplyParameterFromQuery]
+	public string? RequestUrl { get; set; }
+
+}

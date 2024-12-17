@@ -18,7 +18,13 @@ public class GetOrderQueryHandler : IRequestHandler<GetOrderQueryRequest, IRespo
 
     public async Task<IResponse> Handle(GetOrderQueryRequest request, CancellationToken cancellationToken)
     {
-        var orderLists = await _query.OrderQuery.GetAllOrderByUserId(_currentUser.UserId);
+        string userId = _currentUser.UserId!;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return new DataResponse<string?>(null, HttpStatusCodes.NotFound, string.Format(Messages.InvalidCredentials, "Order"), false);
+        }
+
+        var orderLists = await _query.OrderQuery.GetAllOrderByUserId(userId);
 
         var orderResponse = new List<OrderOverviewResponse>();
 

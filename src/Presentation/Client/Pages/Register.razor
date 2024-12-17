@@ -42,7 +42,7 @@
 
 @code {
     [Inject]
-    public HttpInterceptorService Interceptor { get; set; }
+    public HttpInterceptorService Interceptor { get; set; } = default!;
 
     UserRegister user = new UserRegister();
 

@@ -131,11 +131,11 @@ public class IdentityService : IIdentityService
 
         if (result.Succeeded)
         {
-            return new DataResponse<bool>(true, HttpStatusCodes.Accepted,Messages.PasswordChangedSuccess);
+            return new DataResponse<string>("Success!", HttpStatusCodes.Accepted, Messages.PasswordChangedSuccess);
         }
         else
         {
-            List<string> str = new List<string>();
+            List<string> str = [];
             foreach (var err in result.Errors)
             {
                 str.Add(err.Description);

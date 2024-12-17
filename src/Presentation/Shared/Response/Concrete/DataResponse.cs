@@ -6,12 +6,12 @@ namespace BlazorEcommerce.Shared.Response.Concrete;
 public class DataResponse<T> : IDataResponse<T>
 {
     public bool Success { get; set; }
-    public T Data { get; set; }
+    public T? Data { get; set; } // Allow Data to be nullable
 
     public int StatusCode { get; }
-    public List<string> Messages { get; private set; } = new List<string>();
+    public List<string> Messages { get; private set; } = [];
 
-    public DataResponse(T data, int statuscode, bool success = true)
+    public DataResponse(T? data, int statuscode, bool success = true)
     {
         Data = data;
         StatusCode = statuscode;
@@ -24,18 +24,20 @@ public class DataResponse<T> : IDataResponse<T>
         {
             Messages.Add(Constant.Messages.NoDataFound);
         }
-        
     }
 
-    public DataResponse(T data, int statuscode, string message, bool success = true)
+    public DataResponse(T? data, int statuscode, string? message, bool success = true)
     {
         Data = data;
         StatusCode = statuscode;
         Success = success;
-        Messages.Add(message);
+        if (message != null)
+        {
+            Messages.Add(message);
+        }
     }
 
-    public DataResponse(T data, int statuscode, List<string> messages, bool success = true)
+    public DataResponse(T? data, int statuscode, List<string> messages, bool success = true)
     {
         Data = data;
         StatusCode = statuscode;
@@ -43,10 +45,12 @@ public class DataResponse<T> : IDataResponse<T>
         Messages = messages;
     }
 
-    public DataResponse(T data)
+    public DataResponse(T? data)
     {
         Data = data;
         StatusCode = HttpStatusCodes.Accepted;
         Success = true;
     }
+
+    T? IDataResponse<T>.Data => Data; // Explicit interface implementation to match nullability
 }

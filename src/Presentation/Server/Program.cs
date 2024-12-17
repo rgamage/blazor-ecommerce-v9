@@ -43,9 +43,11 @@ using (var scope = app.Services.CreateScope())
     {
         var initialiser = scope.ServiceProvider.GetRequiredService<UserIdentityDbContextInitialiser>();
         await initialiser.InitialiseAsync();
+        await initialiser.SeedData(scope);
 
         var persistenceInitialiser = scope.ServiceProvider.GetRequiredService<PersistenceDbContextInitialiser>();
         await persistenceInitialiser.InitialiseAsync();
+        await persistenceInitialiser.SeedDataAsync();
     }
     catch (Exception ex)
     {

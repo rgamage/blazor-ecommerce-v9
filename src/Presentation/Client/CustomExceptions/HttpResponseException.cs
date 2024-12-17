@@ -18,10 +18,5 @@ namespace BlazorEcommerce.Client.CustomExceptions
 			: base(message, innerException)
 		{
 		}
-
-		protected HttpResponseException(SerializationInfo info, StreamingContext context) 
-			: base(info, context)
-		{
-		}
 	}
 }

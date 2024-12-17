@@ -17,9 +17,9 @@ namespace BlazorEcommerce.Client.Services.ProductService
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
         public string LastSearchText { get; set; } = string.Empty;
-        public List<ProductDto> AdminProducts { get; set; }
+        public List<ProductDto> AdminProducts { get; set; } = [];
 
-        public event Action ProductsChanged;
+        public event Action? ProductsChanged;
 
         public async Task<ProductDto> CreateProduct(ProductDto product)
         {
@@ -55,12 +55,12 @@ namespace BlazorEcommerce.Client.Services.ProductService
                 Message = "No products found.";
         }
 
-        public async Task<ApiResponse<ProductDto>> GetProduct(int productId)
+        public async Task<ApiResponse<ProductDto>?> GetProduct(int productId)
         {
             return await _http.GetFromJsonAsync<ApiResponse<ProductDto>>($"{ProductBaseURL}{productId}");
         }
 
-        public async Task<ProductDto> GetProductDetails(int productId)
+        public async Task<ProductDto?> GetProductDetails(int productId)
         {
             var result = await _http.GetFromJsonAsync<ApiResponse<ProductDto>>($"{ProductBaseURL}{productId}");
             if (result != null && result.Success)
@@ -87,7 +87,7 @@ namespace BlazorEcommerce.Client.Services.ProductService
             if (Products.Count == 0)
                 Message = "No products found";
 
-            ProductsChanged.Invoke();
+            ProductsChanged?.Invoke();
         }
 
         public async Task<List<string>> GetProductSearchSuggestions(string searchText)

@@ -34,7 +34,7 @@ public class GetAddressQueryHandler : IRequestHandler<GetAddressQueryRequest, IR
         {
             if (_currentUser.IsUserAuthenticated)
             {
-                var user = await _identityService.GetUserAsync(_currentUser.UserId);
+                var user = await _identityService.GetUserAsync(_currentUser.UserId ?? string.Empty);
 
                 if (user != null)
                 {

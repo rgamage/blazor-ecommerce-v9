@@ -31,7 +31,8 @@ namespace BlazorEcommerce.Server.Controllers
 			var response = await _authService.Login(request);
 			if (!response.Success)
 			{
-				return BadRequest(response);
+				//return BadRequest(response);
+				return Unauthorized(response);
 			}
 			else
 			{
@@ -39,7 +40,7 @@ namespace BlazorEcommerce.Server.Controllers
 
 				if (responseCast != null)
 				{
-                    setTokenCookie(responseCast.Data.RefreshToken);
+                    SetTokenCookie(responseCast.Data?.RefreshToken);
                 }
 
             }
@@ -55,7 +56,9 @@ namespace BlazorEcommerce.Server.Controllers
             var response = await _authService.RefreshToken(request);
             if (!response.Success)
             {
-                return BadRequest(response);
+                //return BadRequest(response);
+                ClearTokenCookie();
+                return Unauthorized(response);
             }
             else
             {
@@ -63,9 +66,8 @@ namespace BlazorEcommerce.Server.Controllers
 
                 if (responseCast != null)
                 {
-                    setTokenCookie(responseCast.Data.RefreshToken);
+                    SetTokenCookie(responseCast.Data?.RefreshToken);
                 }
-
             }
 
             return Ok(response);
@@ -73,7 +75,7 @@ namespace BlazorEcommerce.Server.Controllers
 
 
         #region private method
-        private void setTokenCookie(string token)
+        private void SetTokenCookie(string? token)
 		{
 			// append cookie with refresh token to the http response
 			var cookieOptions = new CookieOptions
@@ -81,9 +83,16 @@ namespace BlazorEcommerce.Server.Controllers
 				HttpOnly = true,
 				Expires = DateTime.UtcNow.AddDays(7)
 			};
-			Response.Cookies.Append("refreshToken", token, cookieOptions);
-		} 
-		#endregion
+			Response.Cookies.Append("refreshToken", token ?? string.Empty, cookieOptions);
+		}
 
-	}
+        private void ClearTokenCookie()
+        {
+            // clear cookie with refresh token to the http response
+            Response.Cookies.Delete("refreshToken");
+        }
+
+        #endregion
+
+    }
 }
